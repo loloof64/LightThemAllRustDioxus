@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use dioxus::events::MouseEvent;
 
 
 fn main() {
@@ -20,7 +21,7 @@ struct BoardProps {
 }
 
 #[allow(non_snake_case)]
-fn Board(cx: Scope<BoardProps>) -> Element {
+fn Board<'a>(cx: Scope<'a, BoardProps>) -> Element {
     let lights_lit_size = (cx.props.cols_count * cx.props.cols_count) as usize;
     let lights_lit = use_ref(&cx, || vec![false; lights_lit_size]);
     let size_px = (cx.props.cols_count as u16) * 100;
@@ -32,23 +33,30 @@ fn Board(cx: Scope<BoardProps>) -> Element {
             height: "{size_px}px",
             grid_template: format_args!("repeat({0}, 1fr) / repeat({0}, 1fr)", cx.props.cols_count),
 
-            lights_lit.read().iter().map(|lit| cx.render(rsx!(
-                div {
-                    class: "cell",
-                    Light{lit: *lit}
-                }
-            )))
+            lights_lit.read().iter().enumerate().map(|(index, lit)| {
+                let lights_lit_clone = lights_lit.read().clone();
+                cx.render(rsx!(
+                    div {
+                        class: "cell",
+                        Light{
+                            lit: *lit,
+                            onclick: move |_| lights_lit.write()[index] = !lights_lit_clone[index],
+                        }
+                    }
+                ))
+            })
         }
     ))
 }
 
-#[derive(PartialEq, Props)]
-struct LightProps {
-    lit: bool
+#[derive(Props)]
+struct LightProps<'a> {
+    lit: bool,
+    onclick: EventHandler<'a, MouseEvent>,
 }
 
 #[allow(non_snake_case)]
-fn Light(cx: Scope<LightProps>) -> Element {
+fn Light<'a>(cx: Scope<'a, LightProps>) -> Element<'a> {
     let image = if cx.props.lit
         {
             "src/assets/vectors/light_on.svg"
@@ -60,6 +68,7 @@ fn Light(cx: Scope<LightProps>) -> Element {
         img {
             class: "light",
             src: format_args!("{}", image),
+            onclick: |evt| cx.props.onclick.call(evt),
         }
     ))
 }
