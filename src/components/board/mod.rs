@@ -2,14 +2,16 @@ use super::light::Light;
 use dioxus::prelude::*;
 use rand::Rng;
 
-#[derive(PartialEq, Props)]
-pub struct BoardProps {
+#[derive(Props)]
+pub struct BoardProps<'a> {
     cols_count: u8,
+    onwon: EventHandler<'a>
 }
 
 #[allow(non_snake_case)]
-pub fn Board<'a>(cx: Scope<'a, BoardProps>) -> Element {
+pub fn Board<'a>(cx: Scope<'a, BoardProps<'a>>) -> Element {
     let lights_lit_size = (cx.props.cols_count * cx.props.cols_count) as usize;
+    let game_finished = use_state(&cx, || false);
     let lights_lit = use_ref(&cx, || scramble(vec![false; lights_lit_size], 10));
     let size_px = (cx.props.cols_count as u16) * 100;
 
@@ -27,7 +29,14 @@ pub fn Board<'a>(cx: Scope<'a, BoardProps>) -> Element {
                         class: "cell",
                         Light{
                             lit: *lit,
-                            onclick: move |_| toggle_light(&mut lights_lit.write(), index),
+                            onclick: move |_| {
+                                if *game_finished.current() { return; }
+                                toggle_light(&mut lights_lit.write(), index);
+                                if is_game_won(&lights_lit.read()) {
+                                    game_finished.modify(|_| true);
+                                    cx.props.onwon.call(());
+                                }
+                            },
                         }
                     }
                 ))
@@ -70,4 +79,8 @@ fn scramble(mut lights_state: Vec<bool>, iterations: u8) -> Vec<bool> {
         toggle_light(&mut lights_state, rng.gen_range(0..lights_count));
     }
     lights_state
+}
+
+fn is_game_won(lights_state: &Vec<bool>) -> bool {
+    lights_state.iter().all(|&elt| elt == true)
 }
