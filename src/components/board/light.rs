@@ -1,5 +1,5 @@
-use dioxus::prelude::*;
 use dioxus::events::MouseEvent;
+use dioxus::prelude::*;
 
 #[derive(Props)]
 pub struct LightProps<'a> {
@@ -18,6 +18,6 @@ pub fn Light<'a>(cx: Scope<'a, LightProps>) -> Element<'a> {
         class: "light",
         src: format_args!("{}", image),
         onclick: |evt| cx.props.onclick.call(evt),
-        style { [include_str!("./style.css")] },
+        style { [include_str!("./light.css")] },
     }))
 }

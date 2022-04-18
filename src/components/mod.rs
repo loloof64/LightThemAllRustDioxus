@@ -1,4 +1,5 @@
 mod board;
-mod light;
+mod won_label;
 
-pub use board::Board;
+pub use board::*;
+pub use won_label::*;

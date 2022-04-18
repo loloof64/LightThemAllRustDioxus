@@ -1,4 +1,4 @@
-use super::light::Light;
+mod light;
 use dioxus::prelude::*;
 use rand::Rng;
 
@@ -27,7 +27,7 @@ pub fn Board<'a>(cx: Scope<'a, BoardProps<'a>>) -> Element {
                 cx.render(rsx!(
                     div {
                         class: "cell",
-                        Light{
+                        light::Light{
                             lit: *lit,
                             onclick: move |_| {
                                 if *game_finished.current() { return; }
