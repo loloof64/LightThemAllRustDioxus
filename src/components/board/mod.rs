@@ -1,5 +1,6 @@
 use super::light::Light;
 use dioxus::prelude::*;
+use rand::Rng;
 
 #[derive(PartialEq, Props)]
 pub struct BoardProps {
@@ -9,7 +10,7 @@ pub struct BoardProps {
 #[allow(non_snake_case)]
 pub fn Board<'a>(cx: Scope<'a, BoardProps>) -> Element {
     let lights_lit_size = (cx.props.cols_count * cx.props.cols_count) as usize;
-    let lights_lit = use_ref(&cx, || vec![false; lights_lit_size]);
+    let lights_lit = use_ref(&cx, || scramble(vec![false; lights_lit_size], 10));
     let size_px = (cx.props.cols_count as u16) * 100;
 
     cx.render(rsx!(
@@ -57,7 +58,16 @@ fn toggle_light(lights_state: &mut Vec<bool>, index: usize) {
     if col > 0 {
         lights_state[index - 1] = !lights_state[index - 1];
     }
-    if col < (side_size + 1) {
+    if col < (side_size - 1) {
         lights_state[index + 1] = !lights_state[index + 1];
     }
+}
+
+fn scramble(mut lights_state: Vec<bool>, iterations: u8) -> Vec<bool> {
+    let lights_count = lights_state.len();
+    let mut rng = rand::thread_rng();
+    for _ in 0..iterations {
+        toggle_light(&mut lights_state, rng.gen_range(0..lights_count));
+    }
+    lights_state
 }
