@@ -8,4 +8,10 @@ edition = "2021"
 [dependencies]
 dioxus = { version = "0.2.3", features = ["desktop"] }
 dioxus-desktop = "0.2.2"
+lazy_static = "1.4.0"
 rand = "0.8.5"
+rust-i18n = "0.5.2"
+
+[package.metadata.i18n]
+available-locales = ["en", "fr", "es"]
+default-locale = "en"

@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use rust_i18n::t;
 
 #[derive(PartialEq, Props)]
 pub struct WonLabelProps {
@@ -8,10 +9,11 @@ pub struct WonLabelProps {
 #[allow(non_snake_case)]
 pub fn WonLabel(cx: Scope<WonLabelProps>) -> Element {
     if cx.props.game_won {
+        let won_label = t!("game.won");
         cx.render(rsx!(p {
             class: "won_label",
             style { [include_str!("./style.css")] },
-            "You've won !"
+            [won_label]
         }))
     }
     else {

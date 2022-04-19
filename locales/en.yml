@@ -1,0 +1,7 @@
+en:
+  app:
+    title: Light them all
+  game:
+    lights_per_side: Lights per side
+    won: You won !
+    new: New game

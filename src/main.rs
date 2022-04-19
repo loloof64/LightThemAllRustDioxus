@@ -1,4 +1,10 @@
 use dioxus::prelude::*;
+
+use rust_i18n;
+rust_i18n::i18n!("locales");
+
+use rust_i18n::t;
+
 use std::cell::Cell;
 
 mod components;
@@ -11,9 +17,10 @@ use dioxus_desktop::tao::dpi::{
 use game_core::*;
 
 fn main() {
+    rust_i18n::set_locale("es");
     dioxus::desktop::launch_cfg(app, |c| {
         c.with_window(|w| {
-            w.with_title("Light them all")
+            w.with_title(t!("app.title"))
                 .with_resizable(false)
                 .with_inner_size(Size::new(Logical(LogicalSize {
                     width: 600.0,
@@ -29,7 +36,7 @@ fn app(cx: Scope) -> Element {
     let side_lights_count: &Cell<u16> = cx.use_hook(|_| Cell::new(3));
     let game_won = use_state(&cx, || false);
     let lights_lit_state = use_ref(&cx, || {
-        let mut vector = vec![false; 9];
+        let mut vector = vec![true; 9];
         scramble(&mut vector, 10);
         vector
     });
@@ -44,11 +51,14 @@ fn app(cx: Scope) -> Element {
         )
     });
 
+    let config_label = t!("game.lights_per_side");
+    let new_label = t!("game.new");
+
     cx.render(rsx! (
         div {
             div {
                 class: "level_line",
-                "Lights per side",
+                [config_label],
                 select {
                     onchange: |evt| {
                         if let Ok(new_side_lights_count) = &evt.value.parse::<u16>() {
@@ -61,12 +71,12 @@ fn app(cx: Scope) -> Element {
                     onclick: move |_| {
                         let new_size = side_lights_count.get() as usize;
                         let new_size = new_size * new_size;
-                        lights_lit_state.write().resize(new_size, false);
-                        lights_lit_state.write().fill(false);
+                        lights_lit_state.write().resize(new_size, true);
+                        lights_lit_state.write().fill(true);
                         scramble(&mut lights_lit_state.write(), scramble_iterations);
                         game_won.modify(|_| false);
                     },
-                    "New game"
+                    [new_label]
                 }
             }
             Board {

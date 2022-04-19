@@ -1,0 +1,7 @@
+fr: 
+  app: 
+    title: Eclairez-les toutes
+  game: 
+    lights_per_side: Lumières par côté
+    won: Vous avez gagné !
+    new: Nouvelle partie

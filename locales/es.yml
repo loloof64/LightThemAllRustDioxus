@@ -1,0 +1,7 @@
+es:
+  app:
+    title: Enciéndelos a todos
+  game:
+    lights_per_side: Luces por lado
+    won: Has ganado !
+    new: Nuevo juego
