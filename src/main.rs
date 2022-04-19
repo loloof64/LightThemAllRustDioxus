@@ -4,10 +4,23 @@ use std::cell::Cell;
 mod components;
 mod game_core;
 use components::*;
+use dioxus_desktop::tao::dpi::{
+    LogicalSize,
+    Size::{self, Logical},
+};
 use game_core::*;
 
 fn main() {
-    dioxus::desktop::launch(app);
+    dioxus::desktop::launch_cfg(app, |c| {
+        c.with_window(|w| {
+            w.with_title("Light them all")
+                .with_resizable(false)
+                .with_inner_size(Size::new(Logical(LogicalSize {
+                    width: 600.0,
+                    height: 700.0,
+                })))
+        })
+    });
 }
 
 fn app(cx: Scope) -> Element {
@@ -21,13 +34,15 @@ fn app(cx: Scope) -> Element {
         vector
     });
 
-    let select_options = (2..=6).map(move |count| rsx!(
-        option {
-            value: format_args!("{}", count),
-            selected: format_args!("{}", count as u16 == side_lights_count.get()),
-            "{count}"
-        }
-    ));
+    let select_options = (2..=6).map(move |count| {
+        rsx!(
+            option {
+                value: format_args!("{}", count),
+                selected: format_args!("{}", count as u16 == side_lights_count.get()),
+                "{count}"
+            }
+        )
+    });
 
     cx.render(rsx! (
         div {
