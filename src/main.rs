@@ -2,8 +2,9 @@ use dioxus::prelude::*;
 
 use rust_i18n;
 rust_i18n::i18n!("locales");
-
 use rust_i18n::t;
+
+use current_locale;
 
 use std::cell::Cell;
 
@@ -17,7 +18,10 @@ use dioxus_desktop::tao::dpi::{
 use game_core::*;
 
 fn main() {
-    rust_i18n::set_locale("es");
+    let locale = current_locale::current_locale().expect("failed to get current locale of the user");
+    let locale = locale.chars().take(2).collect::<String>();
+    let locale = locale.as_str();
+    rust_i18n::set_locale(locale);
     dioxus::desktop::launch_cfg(app, |c| {
         c.with_window(|w| {
             w.with_title(t!("app.title"))

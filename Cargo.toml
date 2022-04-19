@@ -6,6 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+current_locale = "0.1.1"
 dioxus = { version = "0.2.3", features = ["desktop"] }
 dioxus-desktop = "0.2.2"
 lazy_static = "1.4.0"
